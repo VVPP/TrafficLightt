@@ -58,5 +58,6 @@ public class GameActivity extends AppCompatActivity implements OnClickListener {
 
     public void onClick(DialogInterface dialogInterface, int i) {
         finish();
+        //test
     }
 }
