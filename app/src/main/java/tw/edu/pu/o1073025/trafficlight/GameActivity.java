@@ -1,67 +1,62 @@
 package tw.edu.pu.o1073025.trafficlight;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.pm.ActivityInfo;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
-import android.view.View;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class GameActivity extends AppCompatActivity {
 
+public class GameActivity extends AppCompatActivity implements OnClickListener {
     GameSurfaceView GameSV;
     Handler handler;
+    Runnable runnable = new Runnable() {
+        public void run() {
+            Canvas canvas = GameActivity.this.GameSV.getHolder().lockCanvas();
+            GameActivity.this.GameSV.drawSomething(canvas);
+            GameActivity.this.GameSV.getHolder().unlockCanvasAndPost(canvas);
+            if (!GameActivity.this.GameSV.BoyMoving.booleanValue() || GameActivity.this.GameSV.CurrentLight != "Red") {
+                GameActivity.this.handler.postDelayed(GameActivity.this.runnable, 50);
+                return;
+            }
+            GameActivity.this.handler.removeCallbacks(GameActivity.this.runnable);
+            GameActivity.this.GameSV.handlerLight.removeCallbacks(GameActivity.this.GameSV.runnableLight);
+            GameActivity.this.GameOver();
+        }
+    };
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        //設定全螢幕顯示
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-        //設定螢幕為橫式
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-
-        setContentView(R.layout.activity_game);
-
-        GameSV = (GameSurfaceView) findViewById(R.id.GameSV);
-        //設定初始測試之燈號秒數
-        GameSV.SetLightSec(6,2,3);
-
-        handler= new Handler();
+        getWindow().getDecorView().setSystemUiVisibility(5894);
+        setRequestedOrientation(0);
+        setContentView((int) C0264R.layout.activity_game);
+        this.GameSV = (GameSurfaceView) findViewById(C0264R.C0266id.GameSV);
+        Intent it = getIntent();
+        this.GameSV.SetLightSec(it.getIntExtra("SecG", 0), it.getIntExtra("SecY", 0), it.getIntExtra("SecR", 0));
+        this.handler = new Handler();
     }
 
-    //利用手指觸控，控制小男孩走路
-    public boolean onTouchEvent (MotionEvent event){
-        if (event.getAction() == MotionEvent.ACTION_DOWN){
-            GameSV.BoyMoving = true;
-            handler.post(runnable);
-        }
-        else if (event.getAction() == MotionEvent.ACTION_UP){
-            GameSV.BoyMoving =  false;
-            handler.removeCallbacks(runnable);  //銷毀執行緒
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == 0) {
+            this.GameSV.BoyMoving = Boolean.valueOf(true);
+            this.handler.post(this.runnable);
+        } else if (event.getAction() == 1) {
+            this.GameSV.BoyMoving = Boolean.valueOf(false);
+            this.handler.removeCallbacks(this.runnable);
         }
         return true;
     }
 
-    //處理小男孩走路
-    Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            Canvas canvas = GameSV.getHolder().lockCanvas();
-            GameSV.drawSomething(canvas);
-            GameSV.getHolder().unlockCanvasAndPost(canvas);
-            handler.postDelayed(runnable, 50);
-        }
-    };
+    public void GameOver() {
+        new Builder(this).setTitle("遊戲結束").setMessage("不可以闖紅燈喔！").setIcon(C0264R.C0265drawable.boy8).setPositiveButton("結束系統", this).show();
+    }
 
+    public void onClick(DialogInterface dialogInterface, int i) {
+        finish();
+    }
 }

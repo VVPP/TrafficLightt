@@ -1,54 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2"  />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="紅綠燈(作者：靜宜大學資管系楊子青)"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/gl1" />
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/gl2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.8" />
-
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="StartGame"
-        android:text="開始遊戲"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/gl2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnEnd"
-        app:layout_constraintHorizontal_chainStyle="packed"/>
-
-    <Button
-        android:id="@+id/btnEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="EndApp"
-        android:text="結束系統"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/gl2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnStart" />
-
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:aapt="http://schemas.android.com/aapt" android:layout_width="match_parent" android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.Guideline android:orientation="horizontal" android:id="@+id/gl1" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintGuide_percent="0.2"/>
+    <TextView android:textSize="24sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="紅綠燈(作者：靜宜大學資管系楊子青)" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toStartOf="0" app:layout_constraintTop_toTopOf="@+id/gl1"/>
+    <androidx.constraintlayout.widget.Guideline android:orientation="horizontal" android:id="@+id/gl2" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintGuide_percent="0.8"/>
+    <Button android:textSize="24sp" android:id="@+id/btnStart" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="開始遊戲" android:onClick="StartGame" app:layout_constraintBottom_toTopOf="@+id/gl2" app:layout_constraintEnd_toStartOf="@+id/btnEnd" app:layout_constraintHorizontal_chainStyle="2" app:layout_constraintStart_toStartOf="0"/>
+    <Button android:textSize="24sp" android:id="@+id/btnEnd" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="結束系統" android:onClick="EndApp" app:layout_constraintBottom_toTopOf="@+id/gl2" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toEndOf="@+id/btnStart"/>
+    <androidx.constraintlayout.widget.Guideline android:orientation="horizontal" android:id="@+id/gl3" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintGuide_percent="0.5"/>
+    <EditText android:id="@+id/editTextGreen" android:layout_width="wrap_content" android:layout_height="wrap_content" android:hint="綠燈秒數" android:inputType="number" app:layout_constraintBottom_toBottomOf="@+id/gl3" app:layout_constraintEnd_toStartOf="@+id/editTextYellow" app:layout_constraintHorizontal_chainStyle="2" app:layout_constraintStart_toStartOf="0"/>
+    <EditText android:id="@+id/editTextYellow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:hint="黃燈秒數" android:inputType="number" app:layout_constraintBottom_toBottomOf="@+id/gl3" app:layout_constraintEnd_toStartOf="@+id/editTextRed" app:layout_constraintStart_toEndOf="@+id/editTextGreen"/>
+    <EditText android:id="@+id/editTextRed" android:layout_width="wrap_content" android:layout_height="wrap_content" android:hint="紅燈秒數" android:inputType="number" app:layout_constraintBottom_toBottomOf="@+id/gl3" app:layout_constraintEnd_toEndOf="0" app:layout_constraintStart_toEndOf="@+id/editTextYellow"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

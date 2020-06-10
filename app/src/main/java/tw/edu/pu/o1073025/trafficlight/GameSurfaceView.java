@@ -1,163 +1,201 @@
 package tw.edu.pu.o1073025.trafficlight;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
+import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import androidx.core.internal.view.SupportMenu;
+import androidx.core.view.InputDeviceCompat;
+import androidx.core.view.ViewCompat;
 
-public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
+
+public class GameSurfaceView extends SurfaceView implements Callback {
+    int BGmoveX = 0;
+    Bitmap Boy;
+    Boolean BoyMoving = Boolean.valueOf(false);
+    int CurrentCountDown;
+    String CurrentLight;
+    Rect DestRect;
+    int GreenLightSec;
+    int RedLightSec;
+    Bitmap Road;
+    Rect SrcRect;
+    int YellowLightSec;
+
+
+    float f33h;
+    Handler handlerLight;
+    Paint paint;
+    float ratio;
+    Runnable runnableLight = new Runnable() {
+        public void run() {
+            GameSurfaceView.this.CurrentCountDown--;
+            if (GameSurfaceView.this.CurrentCountDown == -1) {
+                String str = "Yellow";
+                String str2 = "Green";
+                if (GameSurfaceView.this.CurrentLight == str2) {
+                    GameSurfaceView.this.CurrentLight = str;
+                    GameSurfaceView gameSurfaceView = GameSurfaceView.this;
+                    gameSurfaceView.CurrentCountDown = gameSurfaceView.YellowLightSec;
+                } else if (GameSurfaceView.this.CurrentLight == str) {
+                    GameSurfaceView.this.CurrentLight = "Red";
+                    GameSurfaceView gameSurfaceView2 = GameSurfaceView.this;
+                    gameSurfaceView2.CurrentCountDown = gameSurfaceView2.RedLightSec;
+                } else {
+                    GameSurfaceView.this.CurrentLight = str2;
+                    GameSurfaceView gameSurfaceView3 = GameSurfaceView.this;
+                    gameSurfaceView3.CurrentCountDown = gameSurfaceView3.GreenLightSec;
+                }
+            }
+            Canvas canvas = GameSurfaceView.this.surfaceHolder.lockCanvas(null);
+            GameSurfaceView.this.drawSomething(canvas);
+            GameSurfaceView.this.surfaceHolder.unlockCanvasAndPost(canvas);
+            GameSurfaceView.this.handlerLight.postDelayed(GameSurfaceView.this.runnableLight, 1000);
+        }
+    };
+    int step = 1;
+    SurfaceHolder surfaceHolder;
+
+
+    float f34w;
+
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        surfaceHolder = getHolder();
-        surfaceHolder.addCallback(this);
-
-        Road = BitmapFactory.decodeResource(getResources(), R.drawable.road);
-        Boy = BitmapFactory.decodeResource(getResources(), R.drawable.boy1);
-        paint = new Paint();
-
+        SurfaceHolder holder = getHolder();
+        this.surfaceHolder = holder;
+        holder.addCallback(this);
+        this.Road = BitmapFactory.decodeResource(getResources(), C0264R.C0265drawable.road);
+        this.Boy = BitmapFactory.decodeResource(getResources(), C0264R.C0265drawable.boy1);
+        this.paint = new Paint();
+        Handler handler = new Handler();
+        this.handlerLight = handler;
+        handler.post(this.runnableLight);
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        Canvas canvas = surfaceHolder.lockCanvas(null);
+    public void surfaceCreated(SurfaceHolder surfaceHolder2) {
+        Canvas canvas = surfaceHolder2.lockCanvas(null);
         drawSomething(canvas);
-        surfaceHolder.unlockCanvasAndPost(canvas);
+        surfaceHolder2.unlockCanvasAndPost(canvas);
+    }
+
+    public void surfaceChanged(SurfaceHolder surfaceHolder2, int i, int i1, int i2) {
+    }
+
+    public void surfaceDestroyed(SurfaceHolder surfaceHolder2) {
+        this.handlerLight.removeCallbacks(this.runnableLight);
     }
 
     public void drawSomething(Canvas canvas) {
-        DrawRoad(canvas);  //道路背景圖繪製
-        DrawBoy(canvas);  //小男孩繪製
-        DrawLight(canvas);  //紅綠燈繪製
+        DrawRoad(canvas);
+        DrawBoy(canvas);
+        DrawLight(canvas);
     }
 
-
-    @Override
-    public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-
-    }
-
-    SurfaceHolder surfaceHolder;
-    Bitmap Road, Boy;
-
-    int GreenLightSec, YellowLightSec, RedLightSec; //各燈號秒數
-    Boolean BoyMoving = false; //小男孩是否移動
-    int BGmoveX = 0; //背景圖片往左捲動像素
-
-    Paint paint; //畫筆
-    Rect SrcRect, DestRect; //繪圖所需長方形
-    float ratio, w, h; //比例及寬度與長度
-
-    int step = 1; //步數
-
-    //道路背景圖繪製
-    public void DrawRoad(Canvas canvas){
-        //調整圖片高度為裝置解析度高度的95%
-        SrcRect = new Rect(0, 0, Road.getWidth(), Road.getHeight());
-        ratio = Road.getHeight() / (canvas.getHeight() * 0.95f);
-        w = Road.getWidth() / ratio;
-        h = Road.getHeight() / ratio;
-
-        //處理背景捲動
-        if (BoyMoving){
-            BGmoveX -= 5;
+    public void DrawRoad(Canvas canvas) {
+        this.SrcRect = new Rect(0, 0, this.Road.getWidth(), this.Road.getHeight());
+        this.ratio = ((float) this.Road.getHeight()) / (((float) canvas.getHeight()) * 0.95f);
+        this.f34w = ((float) this.Road.getWidth()) / this.ratio;
+        this.f33h = ((float) this.Road.getHeight()) / this.ratio;
+        if (this.BoyMoving.booleanValue()) {
+            this.BGmoveX -= 5;
         }
-        int BGnewX = (int)w + BGmoveX;
-
-        // 如果已捲動整張圖則重新開始，否則用兩張圖拼裝
+        int BGnewX = ((int) this.f34w) + this.BGmoveX;
         if (BGnewX <= 0) {
-            BGmoveX = 0;
-            // only need one draw
-            DestRect = new Rect(0, 0, (int) w, (int) h);
-            canvas.drawBitmap(Road , SrcRect, DestRect, null);
-        } else {
-            // need to draw original and wrap
-            DestRect = new Rect(BGmoveX, 0, (int) (w+BGmoveX), (int) h);
-            canvas.drawBitmap(Road , SrcRect, DestRect, null);
-            DestRect = new Rect(BGnewX, 0, (int) (w+BGnewX), (int) h);
-            canvas.drawBitmap(Road , SrcRect, DestRect, null);
+            this.BGmoveX = 0;
+            Rect rect = new Rect(0, 0, (int) this.f34w, (int) this.f33h);
+            this.DestRect = rect;
+            canvas.drawBitmap(this.Road, this.SrcRect, rect, null);
+            return;
         }
+        int i = this.BGmoveX;
+        Rect rect2 = new Rect(i, 0, (int) (this.f34w + ((float) i)), (int) this.f33h);
+        this.DestRect = rect2;
+        canvas.drawBitmap(this.Road, this.SrcRect, rect2, null);
+        Rect rect3 = new Rect(BGnewX, 0, (int) (this.f34w + ((float) BGnewX)), (int) this.f33h);
+        this.DestRect = rect3;
+        canvas.drawBitmap(this.Road, this.SrcRect, rect3, null);
     }
 
-    //小男孩繪製
-    public void DrawBoy(Canvas canvas){
-        if (BoyMoving){  //分數加1，並改變小男孩走路圖示
-            step++;
-            if (step>8){
-                step = 1;
+    public void DrawBoy(Canvas canvas) {
+        if (this.BoyMoving.booleanValue()) {
+            int i = this.step + 1;
+            this.step = i;
+            if (i > 8) {
+                this.step = 1;
             }
-            int res = getResources().getIdentifier("boy" + (step), "drawable", getContext().getPackageName());
-            Boy = BitmapFactory.decodeResource(getResources(), res);
+            Resources resources = getResources();
+            StringBuilder sb = new StringBuilder();
+            sb.append("boy");
+            sb.append(this.step);
+            this.Boy = BitmapFactory.decodeResource(getResources(), resources.getIdentifier(sb.toString(), "drawable", getContext().getPackageName()));
         }
-
-        //根據裝置解析度比例調整小男孩位置及大小
-        SrcRect = new Rect(0, 0, Boy.getWidth(), Boy.getHeight());
-        float w = Boy.getWidth() / ratio;
-        float h = Boy.getHeight() / ratio;
-        float w0 = canvas.getHeight()* 0.2f;
-        float h0 = canvas.getHeight()* 0.93f - h;
-        DestRect = new Rect((int) w0, (int) h0, (int) (w0+w), (int) (h0+h));
-        canvas.drawBitmap(Boy , SrcRect, DestRect, null);
-
-        //目前步數繪製
-        paint.setColor(Color.BLUE);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setTextSize((int) 60 * canvas.getHeight() / 1080);
-        paint.setAntiAlias(true);
-        canvas.drawText("圖片編號：" + String.valueOf(step), (int) (0), (int) (canvas.getHeight()*0.1) ,paint);
+        this.SrcRect = new Rect(0, 0, this.Boy.getWidth(), this.Boy.getHeight());
+        float h = ((float) this.Boy.getHeight()) / this.ratio;
+        float w0 = ((float) canvas.getHeight()) * 0.2f;
+        float h0 = (((float) canvas.getHeight()) * 0.93f) - h;
+        Rect rect = new Rect((int) w0, (int) h0, (int) (w0 + (((float) this.Boy.getWidth()) / this.ratio)), (int) (h0 + h));
+        this.DestRect = rect;
+        canvas.drawBitmap(this.Boy, this.SrcRect, rect, null);
+        this.paint.setColor(-16776961);
+        this.paint.setStyle(Style.FILL);
+        this.paint.setTextSize((float) ((canvas.getHeight() * 60) / 1080));
+        this.paint.setAntiAlias(true);
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append("圖片編號：");
+        sb2.append(String.valueOf(this.step));
+        String sb3 = sb2.toString();
+        double height = (double) canvas.getHeight();
+        Double.isNaN(height);
+        canvas.drawText(sb3, 0.0f, (float) ((int) (height * 0.1d)), this.paint);
     }
 
-    //紅綠燈繪製
     public void DrawLight(Canvas canvas) {
-        //長方形區域黑色背景
-        paint.setColor(Color.BLACK);
-        int r = (int) 100 * canvas.getHeight() / 1080;
-        canvas.drawRect(canvas.getWidth()-2*r-16, 0,
-                canvas.getWidth(), 6*r+30, paint);
-
-        //空心圓形
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(5.0f);
-
-        //紅綠燈三個圓
-        paint.setColor(Color.GREEN);
-        canvas.drawCircle(canvas.getWidth() - r -8, 5*r+20, r, paint);
-        paint.setColor(Color.YELLOW);
-        canvas.drawCircle(canvas.getWidth() - r -8, 3*r+10, r, paint);
-        paint.setColor(Color.RED);
-        canvas.drawCircle(canvas.getWidth() - r -8, r, r, paint);
-
-
-        //以綠燈為例，畫出實心圓
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
-        paint.setColor(Color.GREEN);
-        canvas.drawCircle(canvas.getWidth() - r -8, 5*r+20, r, paint);
-
-        //顯示各燈號秒數
-        paint.setColor(Color.BLUE);
-        paint.setTextSize(r);
-        canvas.drawText(String.valueOf(GreenLightSec), canvas.getWidth() - 1.5f *r, 5.5f * r + 10 , paint);
-        canvas.drawText(String.valueOf(YellowLightSec), canvas.getWidth() - 1.5f *r, 3.5f * r + 5 , paint);
-        canvas.drawText(String.valueOf(RedLightSec), canvas.getWidth() - 1.5f *r, 1.5f * r  , paint);
+        this.paint.setColor(ViewCompat.MEASURED_STATE_MASK);
+        int r = (canvas.getHeight() * 100) / 1080;
+        canvas.drawRect((float) ((canvas.getWidth() - (r * 2)) - 16), 0.0f, (float) canvas.getWidth(), (float) ((r * 6) + 30), this.paint);
+        this.paint.setStyle(Style.STROKE);
+        this.paint.setStrokeWidth(5.0f);
+        this.paint.setColor(-16711936);
+        canvas.drawCircle((float) ((canvas.getWidth() - r) - 8), (float) ((r * 5) + 20), (float) r, this.paint);
+        this.paint.setColor(InputDeviceCompat.SOURCE_ANY);
+        canvas.drawCircle((float) ((canvas.getWidth() - r) - 8), (float) ((r * 3) + 10), (float) r, this.paint);
+        this.paint.setColor(SupportMenu.CATEGORY_MASK);
+        canvas.drawCircle((float) ((canvas.getWidth() - r) - 8), (float) r, (float) r, this.paint);
+        this.paint.setStyle(Style.FILL_AND_STROKE);
+        this.paint.setTextSize((float) r);
+        String str = this.CurrentLight;
+        if (str == "Green") {
+            this.paint.setColor(-16711936);
+            canvas.drawCircle((float) ((canvas.getWidth() - r) - 8), (float) ((r * 5) + 20), (float) r, this.paint);
+            this.paint.setColor(-16776961);
+            canvas.drawText(String.valueOf(this.CurrentCountDown), ((float) canvas.getWidth()) - (((float) r) * 1.5f), (((float) r) * 5.5f) + 10.0f, this.paint);
+        } else if (str == "Yellow") {
+            this.paint.setColor(InputDeviceCompat.SOURCE_ANY);
+            canvas.drawCircle((float) ((canvas.getWidth() - r) - 8), (float) ((r * 3) + 10), (float) r, this.paint);
+            this.paint.setColor(-16776961);
+            canvas.drawText(String.valueOf(this.CurrentCountDown), ((float) canvas.getWidth()) - (((float) r) * 1.5f), (((float) r) * 3.5f) + 5.0f, this.paint);
+        } else {
+            this.paint.setColor(SupportMenu.CATEGORY_MASK);
+            canvas.drawCircle((float) ((canvas.getWidth() - r) - 8), (float) r, (float) r, this.paint);
+            this.paint.setColor(-16776961);
+            canvas.drawText(String.valueOf(this.CurrentCountDown), ((float) canvas.getWidth()) - (((float) r) * 1.5f), ((float) r) * 1.5f, this.paint);
+        }
     }
 
-    //初始設定各燈號秒數
-    public void SetLightSec(int GreenSec, int YellowSec, int RedSec){
-        GreenLightSec = GreenSec;
-        YellowLightSec = YellowSec;
-        RedLightSec = RedSec;
+    public void SetLightSec(int GreenSec, int YellowSec, int RedSec) {
+        this.GreenLightSec = GreenSec;
+        this.YellowLightSec = YellowSec;
+        this.RedLightSec = RedSec;
+        this.CurrentLight = "Green";
+        this.CurrentCountDown = GreenSec + 1;
     }
-
-
 }

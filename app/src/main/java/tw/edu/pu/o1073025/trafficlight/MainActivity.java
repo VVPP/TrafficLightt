@@ -1,40 +1,35 @@
 package tw.edu.pu.o1073025.trafficlight;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import androidx.appcompat.app.AppCompatActivity;
 
+/* renamed from: tw.edu.pu.csim.tcyang.trafficlight.MainActivity */
 public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    /* access modifiers changed from: protected */
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //設定全螢幕顯示
-        View decorView = getWindow().getDecorView();
-        decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-
-        //設定螢幕為橫式
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
-        setContentView(R.layout.activity_main);
+        getWindow().getDecorView().setSystemUiVisibility(5894);
+        setRequestedOrientation(0);
+        setContentView((int) C0264R.layout.activity_main);
     }
 
-    public void StartGame(View v){
+    public void StartGame(View v) {
         Intent it = new Intent();
         it.setClass(this, GameActivity.class);
+        EditText SecY = (EditText) findViewById(C0264R.C0266id.editTextYellow);
+        EditText SecR = (EditText) findViewById(C0264R.C0266id.editTextRed);
+        String str = "SecG";
+        it.putExtra(str, Integer.valueOf(((EditText) findViewById(C0264R.C0266id.editTextGreen)).getText().toString()));
+        it.putExtra("SecY", Integer.valueOf(SecY.getText().toString()));
+        it.putExtra("SecR", Integer.valueOf(SecR.getText().toString()));
         startActivity(it);
         finish();
     }
 
-    public void EndApp(View v){
+    public void EndApp(View v) {
         finish();
     }
 }
